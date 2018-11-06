@@ -8,7 +8,7 @@
     "clean": "rimraf *.js *.d.ts",
     "lint": "tslint -p \".\" -t stylish",
     "prepublish": "npm run build",
-    "postpublish": "clean"
+    "postpublish": "npm run clean"
   },
   "repository": {
     "type": "git",
