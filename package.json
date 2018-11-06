@@ -1,0 +1,36 @@
+{
+  "name": "redux-saga-tools",
+  "version": "1.0.0",
+  "description": "A set of utility functions to write saga and reducers easily",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rimraf lib && tsc",
+    "lint": "tslint -p \".\" -t stylish",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rintoj/redux-saga-tools.git"
+  },
+  "keywords": [
+    "Redux",
+    "Saga"
+  ],
+  "author": "Rinto Jose",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rintoj/redux-saga-tools/issues"
+  },
+  "homepage": "https://github.com/rintoj/redux-saga-tools#readme",
+  "dependencies": {
+    "redux-saga": "^0.16.2"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.2",
+    "tslint": "^5.11.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-react": "^3.6.0",
+    "tslint-react-recommended": "^1.0.15",
+    "typescript": "^3.0.3"
+  }
+}

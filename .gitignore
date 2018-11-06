@@ -1,0 +1,4 @@
+node_modules/
+lib/
+redux-saga-tools-*.tgz
+scripts/
