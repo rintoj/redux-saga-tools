@@ -4,9 +4,11 @@
   "description": "A set of utility functions to write saga and reducers easily",
   "main": "lib/index.js",
   "scripts": {
-    "build": "rimraf lib && tsc",
+    "build": "rimraf *.js *.d.ts && tsc",
+    "clean": "rimraf *.js *.d.ts",
     "lint": "tslint -p \".\" -t stylish",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "postpublish": "clean"
   },
   "repository": {
     "type": "git",
