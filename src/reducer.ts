@@ -46,3 +46,8 @@ export function filterById<T>(byId?: ById<T>, itemIds?: string[]): ById<T> {
 export function filterToArrayById<T>(byId?: ById<T>, itemIds?: string[]): T[] {
   return (itemIds || []).map(key => (byId || {})[key])
 }
+
+export function uniqueProperties(byId?: ById<any>, property: string = 'id') {
+  const properties = Object.keys(byId || {}).reduce((a, key: string) => ({ ...a, [((byId || {})[key] || {})[property]]: true }), {})
+  return Object.keys(properties)
+}
