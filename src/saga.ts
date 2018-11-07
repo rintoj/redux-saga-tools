@@ -58,7 +58,6 @@ export function* createSagaStream(callback: Function, saga: any, action?: any) {
   let channel: any
   try {
     channel = eventChannel(emit => callback(emit, (action ? action.payload : undefined) || {}))
-    console.log('channel opened!')
     while (true) {
       const update = yield take(channel)
       if (typeof saga === 'string') {
@@ -68,12 +67,10 @@ export function* createSagaStream(callback: Function, saga: any, action?: any) {
       }
     }
   } catch (e) {
-    console.log(`channel failed: ${e.message}`)
     channel && channel.close()
   } finally {
     if (yield cancelled()) {
       channel && channel.close()
-      console.log('channel closed!')
     }
   }
 }
@@ -82,7 +79,7 @@ export function* createSagaChannel(actionType: string | string[], callback: Func
   let task
   while (true) {
     const action = yield take(actionType)
-    const stopAction = actionType instanceof Array && action[1] === (action && action.type)
+    const stopAction = actionType instanceof Array && actionType[1] === (action && action.type)
     if (!stopAction) {
       if (task) { yield cancel(task) }
       task = yield fork(createSagaStream, callback, saga, action)
