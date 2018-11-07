@@ -47,7 +47,7 @@ export function filterToArrayById<T>(byId?: ById<T>, itemIds?: string[]): T[] {
   return (itemIds || []).map(key => (byId || {})[key])
 }
 
-export function unique(array?: any[], property: string = 'id') {
+export function unique(array?: any[]) {
   const properties = (array || []).reduce((a: any, item: any) => ({ ...a, [item]: true }), {})
   return Object.keys(properties)
 }
