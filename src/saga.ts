@@ -56,17 +56,21 @@ export function createAsyncSagaForEvery(actionType: any, processor: Function) {
 
 export function* createSagaStream(callback: Function, saga: any, action?: any) {
   let channel: any
+  const actionType = (typeof saga === 'string') ? saga : undefined
   try {
+    if (actionType != undefined) { yield put(ProgressActions.startAction(actionType)) }
     channel = eventChannel(emit => callback(emit, (action ? action.payload : undefined) || {}))
     while (true) {
       const update = yield take(channel)
       if (typeof saga === 'string') {
         yield put({ type: saga, payload: update })
+        if (actionType != undefined) { yield put(ProgressActions.endAction(actionType)) }
       } else {
         yield call(saga, update)
       }
     }
   } catch (e) {
+    if (actionType != undefined) { yield put(ProgressActions.failAction(actionType, e.message)) }
     channel && channel.close()
   } finally {
     if (yield cancelled()) {
