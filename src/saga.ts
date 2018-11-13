@@ -56,12 +56,11 @@ export function* createSagaStream(callback: Function, saga: any, action?: any) {
       const update = yield take(channel)
       if (typeof saga === 'string') {
         try {
-
           yield put({ type: saga, payload: update })
-          if (actionType != undefined) { yield put(ProgressActions.endAction(actionType)) }
         } catch (e) {
           if (actionType != undefined) { yield put(ProgressActions.failAction(actionType, e.message)) }
         }
+        if (actionType != undefined) { yield put(ProgressActions.endAction(actionType)) }
       } else {
         yield call(saga, update)
       }
