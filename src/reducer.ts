@@ -61,3 +61,7 @@ export function uniquePropsById(byId?: ById<any>, property: string = 'id') {
   const properties = Object.keys(byId || {}).reduce((a, key: string) => ({ ...a, [((byId || {})[key] || {})[property]]: true }), {})
   return Object.keys(properties)
 }
+
+export function missingIds<T>(byId?: ById<T>, objectIds?: string[]) {
+  return (objectIds || []).map(id => id != undefined && (byId || {})[id] == undefined)
+}
