@@ -62,6 +62,6 @@ export function uniquePropsById(byId?: ById<any>, property: string = 'id') {
   return Object.keys(properties)
 }
 
-export function missingIds<T>(byId?: ById<T>, objectIds?: string[]) {
+export function missingIds<T>(byId?: ById<T>, objectIds?: Array<string | undefined>) {
   return (objectIds || []).map(id => id != undefined && (byId || {})[id] == undefined)
 }
