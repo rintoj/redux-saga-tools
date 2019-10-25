@@ -46,3 +46,22 @@ export function filterById<T>(byId?: ById<T>, itemIds?: string[]): ById<T> {
 export function filterToArrayById<T>(byId?: ById<T>, itemIds?: string[]): T[] {
   return (itemIds || []).map(key => (byId || {})[key])
 }
+
+export function unique(array?: any[]) {
+  const properties = (array || []).reduce((a: any, item: any) => ({ ...a, [item]: true }), {})
+  return Object.keys(properties)
+}
+
+export function uniqueProps(array?: any[], property: string = 'id') {
+  const properties = (array || []).reduce((a: any, item: any) => ({ ...a, [(item || {})[property]]: true }), {})
+  return Object.keys(properties)
+}
+
+export function uniquePropsById(byId?: ById<any>, property: string = 'id') {
+  const properties = Object.keys(byId || {}).reduce((a, key: string) => ({ ...a, [((byId || {})[key] || {})[property]]: true }), {})
+  return Object.keys(properties)
+}
+
+export function missingIds<T>(byId?: ById<T>, objectIds?: Array<string | undefined>) {
+  return (objectIds || []).filter(id => id != undefined && (byId || {})[id] == undefined)
+}

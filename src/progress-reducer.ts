@@ -34,7 +34,7 @@ function resetAction(state: ProgressState, { type }: { type: string }): Progress
   }
 }
 
-export default createReducer({}, {
+export const progressReducer = createReducer({}, {
   [ProgressActionType.START_ACTION]: startAction,
   [ProgressActionType.END_ACTION]: endAction,
   [ProgressActionType.FAIL_ACTION]: failAction,

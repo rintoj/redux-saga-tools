@@ -30,50 +30,48 @@ export interface Handlers {
   [id: string]: Function | [Function, String] | [Function, String, String]
 }
 
-export function createSagas(handlers: Handlers) {
-  return Object.keys(handlers).reduce((sagas: any[], actionType: any) => {
-    const config: any = handlers[actionType] instanceof Array ? handlers[actionType] : [handlers[actionType]]
-    const [processor, successActionType, failureActionType] = config
-    return [...sagas, takeLatest(actionType, genericActionSaga, actionType, { processor, successActionType, failureActionType })]
-  }, [])
-}
-
 export function createSaga(actionType: any, processor: Function, successActionType?: any, failureActionType?: any) {
-  return takeLatest(actionType, genericActionSaga, actionType, { processor, successActionType, failureActionType })
-}
-
-export function createAsyncSaga(actionType: any, processor: Function) {
   return takeLatest(actionType, genericActionSaga, actionType, {
-    processor, successActionType: `${actionType}_SUCCESS`, failureActionType: `${actionType}_SUCCESS`,
+    processor,
+    successActionType: successActionType || `${actionType}_SUCCESS`,
+    failureActionType: failureActionType || `${actionType}_ERROR`,
   })
 }
 
-export function createAsyncSagaForEvery(actionType: any, processor: Function) {
+export function createSagaForEvery(actionType: any, processor: Function, successActionType?: any, failureActionType?: any) {
   return takeEvery(actionType, genericActionSaga, actionType, {
-    processor, successActionType: `${actionType}_SUCCESS`, failureActionType: `${actionType}_SUCCESS`,
+    processor,
+    successActionType: successActionType || `${actionType}_SUCCESS`,
+    failureActionType: failureActionType || `${actionType}_ERROR`,
   })
 }
 
 export function* createSagaStream(callback: Function, saga: any, action?: any) {
   let channel: any
+  const actionType = (typeof saga === 'string') ? saga : undefined
   try {
+    if (actionType != undefined) { yield put(ProgressActions.startAction(actionType)) }
     channel = eventChannel(emit => callback(emit, (action ? action.payload : undefined) || {}))
-    console.log('channel opened!')
     while (true) {
       const update = yield take(channel)
       if (typeof saga === 'string') {
-        yield put({ type: saga, payload: update })
+        try {
+          yield put({ type: saga, payload: update })
+        } catch (e) {
+          if (actionType != undefined) { yield put(ProgressActions.failAction(actionType, e.message)) }
+        }
+        if (actionType != undefined) { yield put(ProgressActions.endAction(actionType)) }
       } else {
         yield call(saga, update)
       }
     }
   } catch (e) {
-    console.log(`channel failed: ${e.message}`)
+    if (actionType != undefined) { yield put(ProgressActions.failAction(actionType, e.message)) }
     channel && channel.close()
+    console.error(e)
   } finally {
     if (yield cancelled()) {
       channel && channel.close()
-      console.log('channel closed!')
     }
   }
 }
@@ -82,7 +80,7 @@ export function* createSagaChannel(actionType: string | string[], callback: Func
   let task
   while (true) {
     const action = yield take(actionType)
-    const stopAction = actionType instanceof Array && action[1] === (action && action.type)
+    const stopAction = actionType instanceof Array && actionType[1] === (action && action.type)
     if (!stopAction) {
       if (task) { yield cancel(task) }
       task = yield fork(createSagaStream, callback, saga, action)
